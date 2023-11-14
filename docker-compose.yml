@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  ubuntu:
+    ports:
+      - "80"
+      - "6379"
+    volumes:
+      - "./:/usr/files"
+    restart: always
+    logging:
+      options:
+        max-size: 1g
+    image: yadfs-node

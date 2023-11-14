@@ -1,0 +1,13 @@
+syntax="proto3";
+
+option optimize_for=SPEED;
+
+package test_message;
+
+service DataTransferService {
+    rpc Message(testM) returns (testM);
+}
+
+message testM {
+    string word =1;
+}

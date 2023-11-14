@@ -1,0 +1,32 @@
+{
+  "containers": [
+    {
+      "Name": "yet-another-distributed-file-system-ubuntu-3",
+      "EndpointID": "67ccfa171f5701d6dadb489a0b44125449dcbe7c69fb22e4bef244ce523cfb09",
+      "MacAddress": "02:42:ac:15:00:02",
+      "IPv4Address": "172.21.0.2/16",
+      "IPv6Address": ""
+    },
+    {
+      "Name": "yet-another-distributed-file-system-ubuntu-2",
+      "EndpointID": "5cd90ed9bcf452f94facf36ee9e8b585166e5103376d3adcb9b824b68ccc7307",
+      "MacAddress": "02:42:ac:15:00:04",
+      "IPv4Address": "172.21.0.4/16",
+      "IPv6Address": ""
+    },
+    {
+      "Name": "yet-another-distributed-file-system-ubuntu-1",
+      "EndpointID": "3b09d1788190dbff06d618cae86abc071d9cf21a0b20ebfbe4d0729ff7ea0e5a",
+      "MacAddress": "02:42:ac:15:00:03",
+      "IPv4Address": "172.21.0.3/16",
+      "IPv6Address": ""
+    }
+  ],
+  "namenode": {
+    "Name": "yet-another-distributed-file-system-ubuntu-1",
+    "EndpointID": "3b09d1788190dbff06d618cae86abc071d9cf21a0b20ebfbe4d0729ff7ea0e5a",
+    "MacAddress": "02:42:ac:15:00:03",
+    "IPv4Address": "172.21.0.3/16",
+    "IPv6Address": ""
+  }
+}
