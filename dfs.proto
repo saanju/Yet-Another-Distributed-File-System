@@ -1,0 +1,70 @@
+syntax="proto3";
+
+option optimize_for=SPEED;
+
+package dfs;
+
+service DataTransferService {
+    rpc Message(testM) returns (testM);
+    rpc UploadFile (stream FileData) returns (Ack);
+	rpc DownloadFile (FileInfo) returns (stream FileData);
+	rpc FileSearch (FileInfo) returns (Ack);
+	rpc ReplicateFile (stream FileData) returns (Ack);
+	rpc FileList (UserInfo) returns (UserFileList);
+	rpc FileDelete (FileInfo) returns (Ack);
+	rpc UpdateFile (stream FileData) returns (Ack);
+    rpc StoreFileChunk(stream FileDataChunk) returns (Ack);
+	rpc GetFileChunk(FileDataChunkInfo) returns (stream FileDataChunk);
+	rpc IsDataNodeAlive(Empty) returns (DataNodeStats);
+}
+
+message testM {
+    string word =1;
+}
+
+message DataNodeStats{
+	string cpu_usage = 1;
+  	string disk_space = 2; 
+  	string used_mem = 3;
+}
+
+message Empty{
+
+}
+
+message UserInfo {
+	string username=1;
+}
+
+message UserFileList{
+    string filenames=1;
+}
+
+message FileInfo {
+    string username=1;
+    string filename=2;
+}
+
+message Ack{
+    bool success=1;
+    string message=2;
+}
+
+message FileData {
+	string username = 1;
+	string filename =2;
+	bytes data =3;
+}
+
+message FileDataChunk {
+	string username = 1;
+	string filename =2;
+	bytes data =3;
+    int32 seq_no=4;
+}
+
+message FileDataChunkInfo {
+	string username = 1;
+	string filename =2;
+    int32 seq_no=3;
+}

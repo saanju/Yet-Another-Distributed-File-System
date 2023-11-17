@@ -1,7 +1,7 @@
 from concurrent import futures
 from threading import Thread
-import test_message_pb2_grpc
-import test_message_pb2
+import dfs_pb2_grpc
+import dfs_pb2
 import grpc
 import time
 import os
@@ -15,22 +15,24 @@ def get_file_chunks():
     username = input("Enter Username : ")
     filename = input("Enter Filename : ")
 
-    file_to_upload = os.path.join('files', filename)
-
+    file_to_upload = os.path.join('/usr/files/files', filename)
     s_time = time.time()
 
     with open(file_to_upload, "rb") as f:
         while True:
             chunk = f.read(MAX_CHUNK_SIZE)
+            # print(chunk)
             if not chunk:
                 break
-
-            yield dfs_pb2.FileData(username=username, filename=filename, data=chunk)
+            fdata = dfs_pb2.FileData(
+                username=username, filename=filename, data=chunk)
+            yield fdata
     print("Time taken to Upload : ", time.time()-s_time)
 
 
 def upload_file(stub):
-    response = stub.UploadFile(get_file_chunks())
+    data_chunks = get_file_chunks()
+    response = stub.UploadFile(data_chunks)
     if (response.success):
         print("File Uploaded Successfully")
     else:
@@ -49,7 +51,7 @@ def download_file(stub):
         data += response.data
 
     print("Time taken to Download : ", time.time()-s_time)
-    op_file_path = os.path.join('downloads', filename)
+    op_file_path = os.path.join('/usr/files/downloads', filename)
     f = open(op_file_path, "wb")
     f.write(data)
     f.close()
@@ -99,7 +101,7 @@ def get_user_input(stub):
     print("5. Update a file in DFS")
     print("6. Get all file for a User")
     print("==================================================")
-    selected_option = input("Please Choose an Input")
+    selected_option = input("Please Choose an Input : \n")
 
     if (selected_option == '1'):
         upload_file(stub)
@@ -119,12 +121,11 @@ def get_user_input(stub):
 
 def main():
     config = ""
-    with open("config.json", "r") as f:
+    with open("/usr/files/config.json", "r") as f:
         config = f.read()
     config = json.loads(config)
-
     namenode_channel = grpc.insecure_channel(
-        '{}'.format(f"{config['namenode']['IPv4Address'][-3]}:80"))
+        '{}:80'.format(config['namenode']['IPv4Address'][:-3]))
     try:
         grpc.channel_ready_future(namenode_channel).result(timeout=1)
     except grpc.FutureTimeoutError:
