@@ -23,6 +23,10 @@ def save_meta_data_datanode(username, filename, meta_data):
     r_conn.set(key, meta_data_json)
 
 
+def delete_meta_data_namenode(username, filename):
+    r_conn.delete(username+"_"+filename)
+
+
 def key_exists(key):
     return r_conn.exists(key)
 
@@ -54,4 +58,14 @@ def save_user_file(username, filename):
     else:
         userfiles = []
     userfiles.append(filename)
+    r_conn.set(username, json.dumps(userfiles))
+
+
+def delete_user_file(username, filename):
+    if (key_exists(username)):
+        userfiles = json.loads(r_conn.get(username).decode('utf-8'))
+    else:
+        userfiles = []
+    if (len(userfiles) > 0):
+        userfiles.remove(filename)
     r_conn.set(username, json.dumps(userfiles))

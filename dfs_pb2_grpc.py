@@ -69,6 +69,11 @@ class DataTransferServiceStub(object):
                 request_serializer=dfs__pb2.Empty.SerializeToString,
                 response_deserializer=dfs__pb2.DataNodeStats.FromString,
                 )
+        self.DeleteFileChunk = channel.unary_unary(
+                '/dfs.DataTransferService/DeleteFileChunk',
+                request_serializer=dfs__pb2.FileDataChunkInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
 
 
 class DataTransferServiceServicer(object):
@@ -140,6 +145,12 @@ class DataTransferServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DeleteFileChunk(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DataTransferServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -197,6 +208,11 @@ def add_DataTransferServiceServicer_to_server(servicer, server):
                     servicer.IsDataNodeAlive,
                     request_deserializer=dfs__pb2.Empty.FromString,
                     response_serializer=dfs__pb2.DataNodeStats.SerializeToString,
+            ),
+            'DeleteFileChunk': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteFileChunk,
+                    request_deserializer=dfs__pb2.FileDataChunkInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -392,5 +408,22 @@ class DataTransferService(object):
         return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/IsDataNodeAlive',
             dfs__pb2.Empty.SerializeToString,
             dfs__pb2.DataNodeStats.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteFileChunk(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/DeleteFileChunk',
+            dfs__pb2.FileDataChunkInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

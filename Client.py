@@ -6,6 +6,7 @@ import grpc
 import time
 import os
 import json
+import sys
 
 
 def get_file_chunks():
@@ -49,6 +50,9 @@ def download_file(stub):
     for response in response_iter:
         filename = response.filename
         data += response.data
+    if (len(data) == 0):
+        print(f"File {filename} not found for user {username}")
+        return
 
     print("Time taken to Download : ", time.time()-s_time)
     op_file_path = os.path.join('/usr/files/downloads', filename)
@@ -89,7 +93,13 @@ def update_file(stub):
 def get_list_of_user_file(stub):
     username = input("Enter Username : ")
     response = stub.FileList(dfs_pb2.UserInfo(username=username))
-    print(response.Filenames)
+    if (response.filenames == ""):
+        print(response.message)
+    else:
+        print(f"User {username} Files")
+        userfiles = json.loads(response.filenames)
+        for file in userfiles:
+            print(file)
 
 
 def get_user_input(stub):

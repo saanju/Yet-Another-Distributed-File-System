@@ -16,6 +16,7 @@ service DataTransferService {
     rpc StoreFileChunk(stream FileDataChunk) returns (Ack);
 	rpc GetFileChunk(FileDataChunkInfo) returns (stream FileDataChunk);
 	rpc IsDataNodeAlive(Empty) returns (DataNodeStats);
+	rpc DeleteFileChunk(FileDataChunkInfo) returns (Ack);
 }
 
 message testM {
@@ -38,6 +39,7 @@ message UserInfo {
 
 message UserFileList{
     string filenames=1;
+	string message=2;
 }
 
 message FileInfo {

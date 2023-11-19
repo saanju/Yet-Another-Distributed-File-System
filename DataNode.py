@@ -27,8 +27,13 @@ class DataNodeServicer(dfs_pb2_grpc.DataTransferServiceServicer):
     def GetFileChunk(self, request, context):
         username, filename, seq_no = request.username, request.filename, request.seq_no
         data_chunk = db.get_data(username+"_"+filename+"_"+str(seq_no))
-        data_chunk=bytes(data_chunk,"utf-8")
+        data_chunk = bytes(data_chunk, "utf-8")
         return self.SendDataInStream(data_chunk, username, filename, seq_no)
+
+    def DeleteFileChunk(self, request, context):
+        username, filename, seq_no = request.username, request.filename, request.seq_no
+        db.delete_entry_with_key(username+"_"+filename+"_"+str(seq_no))
+        return dfs_pb2.Ack(success=True, message="File Chunk Deleted Successfully")
 
     def IsDataNodeAlive(self, request, context):
         cpu_usage = str(psutil.cpu_percent())

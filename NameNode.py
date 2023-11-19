@@ -10,6 +10,7 @@ import os
 from dotenv import load_dotenv
 import sys
 from DownloadHelper import DownloadHelper
+from DeleteHelper import DeleteHelper
 import redis_db as db
 import subprocess
 
@@ -59,6 +60,21 @@ class NameNodeServicer(dfs_pb2_grpc.DataTransferServiceServicer):
         res = db.key_exists(username+"_"+filename)
         print("Is File Present : ", res)
         return res
+
+    def FileSearch(self, request, context):
+        username, filename = request.username, request.filename
+        if (self.FileExists(username, filename)):
+            return dfs_pb2.Ack(success=True, message=f"File {filename} for user {username} exists")
+        else:
+            return dfs_pb2.Ack(success=False, message=f"File {filename} for user {username} does not exist")
+
+    def FileList(self, request, context):
+        username = request.username
+        if (db.key_exists(username) == False):
+            return dfs_pb2.UserFileList(filenames="", message="User not found")
+        else:
+            userfiles = db.get_user_files(username)
+            return dfs_pb2.UserFileList(filenames=json.dumps(userfiles), message="Retrieved User files successfully")
 
     def GetThreeLeastUtilizedNodes(self):
         min_val1 = min_val2 = min_val3 = 305.00
@@ -128,19 +144,27 @@ class NameNodeServicer(dfs_pb2_grpc.DataTransferServiceServicer):
             datanode2_stub = None
         filename, username = "", ""
         data = bytes("", 'utf-8')
-        for request in request_iterator:
-            username, filename = request.username, request.filename
-            print("Key for file : ", username+"_"+filename)
-            if (self.FileExists(username, filename)):
-                print("File Already Exists Sending Negative Ack")
-                return dfs_pb2.Ack(success=False, message="File already exists for this user. Please rename or delete file first")
-            break
-
+        # for request in request_iterator:
+        #     username, filename = request.username, request.filename
+        #     print("Key for file : ", username+"_"+filename)
+        #     if (self.FileExists(username, filename)):
+        #         print("File Already Exists Sending Negative Ack")
+        #         return dfs_pb2.Ack(success=False, message="File already exists for this user. Please rename or delete file first")
+        #     break
+        username, filename = "", ""
         curr_data_size = 0
         curr_data_bytes = bytes("", 'utf-8')
         seq_no = 1
         meta_data = []
+        check_file_existence = False
         for request in request_iterator:
+            if (check_file_existence == False):
+                username, filename = request.username, request.filename
+                print("Key for file : ", username+"_"+filename)
+                if (self.FileExists(username, filename)):
+                    print("File Already Exists Sending Negative Ack")
+                    return dfs_pb2.Ack(success=False, message="File already exists for this user. Please rename or delete file first")
+                check_file_existence = True
             if ((curr_data_size+sys.getsizeof(request.data)) > SHARD_SIZE):
                 # Perform Metadata Storage Here
                 curr_meta_data = [seq_no, "", "", ""]
@@ -214,6 +238,134 @@ class NameNodeServicer(dfs_pb2_grpc.DataTransferServiceServicer):
             start = end
             end += max_chunk_size
             yield dfs_pb2.FileData(username=request.username, filename=request.filename, data=curr_chunk)
+
+    def FileDelete(self, request, context):
+        username, filename = request.username, request.filename
+        if (self.FileExists(username, filename) == False):
+            return dfs_pb2.Ack(success=False, message="Could not find file")
+
+        file_metadata = db.parse_meta_data(username, filename)
+        print(file_metadata)
+
+        delete_helper_instance = DeleteHelper(self)
+        response_success = delete_helper_instance.DeleteDataFromDataNodes(
+            username, filename, file_metadata)
+        if (response_success):
+            db.delete_meta_data_namenode(username, filename)
+            db.delete_user_file(username, filename)
+            return dfs_pb2.Ack(success=True, message="Successfully deleted the file")
+        else:
+            return dfs_pb2.Ack(success=False, message="Failedd to delete the file")
+
+    def UpdateFile(self, request_iterator, context):
+        least_loaded_node1, least_loaded_node2, least_loaded_node3 = self.GetThreeLeastUtilizedNodes()
+        if (least_loaded_node1 == -1):
+            return dfs_pb2.Ack(success=False, message="No Active DataNode found")
+
+        print(
+            f"DataNodes found DN1 : {least_loaded_node1} replica DN2 : {least_loaded_node2} replica DN3 : {least_loaded_node3}")
+
+        datanode1_channel = self.ip_channel_dict[least_loaded_node1]
+        datanode1_stub = dfs_pb2_grpc.DataTransferServiceStub(
+            datanode1_channel)
+        # print("After Stub1")
+        if (least_loaded_node2 != "" and least_loaded_node2 in self.ip_channel_dict):
+            datanode2_channel = self.ip_channel_dict[least_loaded_node2]
+            datanode2_stub = dfs_pb2_grpc.DataTransferServiceStub(
+                datanode2_channel)
+            if (least_loaded_node3 != "" and least_loaded_node3 in self.ip_channel_dict):
+                datanode3_channel = self.ip_channel_dict[least_loaded_node3]
+                datanode3_stub = dfs_pb2_grpc.DataTransferServiceStub(
+                    datanode3_channel)
+            else:
+                datanode3_stub = None
+        else:
+            datanode2_stub = None
+        filename, username = "", ""
+        data = bytes("", 'utf-8')
+        # for request in request_iterator:
+        #     username, filename = request.username, request.filename
+        #     print("Key for file : ", username+"_"+filename)
+        #     if (self.FileExists(username, filename)):
+        #         print("File Already Exists Sending Negative Ack")
+        #         return dfs_pb2.Ack(success=False, message="File already exists for this user. Please rename or delete file first")
+        #     break
+        username, filename = "", ""
+        curr_data_size = 0
+        curr_data_bytes = bytes("", 'utf-8')
+        seq_no = 1
+        meta_data = []
+        check_file_existence = False
+        for request in request_iterator:
+            if (check_file_existence == False):
+                username, filename = request.username, request.filename
+                print("Key for file : ", username+"_"+filename)
+                file_exists = self.FileExists(username, filename)
+                if (file_exists == False):
+                    print("File Doesnt Exist Uploading File")
+                else:
+                    print("Deleting existing file chunks")
+                    file_metadata = db.parse_meta_data(username, filename)
+                    print(file_metadata)
+
+                    delete_helper_instance = DeleteHelper(self)
+                    response_success = delete_helper_instance.DeleteDataFromDataNodes(
+                        username, filename, file_metadata)
+                    if (response_success == True):
+                        print("Existing File Chunks Successfully")
+                    else:
+                        print("Failed to Delete existing File Chunks")
+                    # return dfs_pb2.Ack(success=False, message="File already exists for this user. Please rename or delete file first")
+                check_file_existence = True
+            if ((curr_data_size+sys.getsizeof(request.data)) > SHARD_SIZE):
+                # Perform Metadata Storage Here
+                curr_meta_data = [seq_no, "", "", ""]
+                datanode1_response = datanode1_stub.StoreFileChunk(self.SendDataInStream(
+                    curr_data_bytes, username, filename, seq_no))
+                if (datanode1_response.success):
+                    curr_meta_data[1] = least_loaded_node1
+                if datanode2_stub is not None:
+                    datanode2_response = datanode2_stub.StoreFileChunk(self.SendDataInStream(
+                        curr_data_bytes, username, filename, seq_no))
+                    if (datanode2_response.success):
+                        curr_meta_data[2] = least_loaded_node2
+                if datanode3_stub is not None:
+                    datanode3_response = datanode3_stub.StoreFileChunk(self.SendDataInStream(
+                        curr_data_bytes, username, filename, seq_no))
+                    if (datanode3_response.success):
+                        curr_meta_data[3] = least_loaded_node3
+                meta_data.append(curr_meta_data)
+                curr_data_bytes = request.data
+                curr_data_size = sys.getsizeof(request.data)
+                seq_no += 1
+            else:
+                curr_data_size += sys.getsizeof(request.data)
+                curr_data_bytes += request.data
+
+        if (curr_data_size > 0):
+            curr_meta_data = [seq_no, "", "", ""]
+            datanode1_response = datanode1_stub.StoreFileChunk(self.SendDataInStream(
+                curr_data_bytes, username, filename, seq_no))
+            if (datanode1_response.success):
+                curr_meta_data[1] = least_loaded_node1
+            if datanode2_stub is not None:
+                datanode2_response = datanode2_stub.StoreFileChunk(self.SendDataInStream(
+                    curr_data_bytes, username, filename, seq_no))
+                if (datanode2_response.success):
+                    curr_meta_data[2] = least_loaded_node2
+            if datanode3_stub is not None:
+                datanode3_response = datanode3_stub.StoreFileChunk(self.SendDataInStream(
+                    curr_data_bytes, username, filename, seq_no))
+                if (datanode3_response.success):
+                    curr_meta_data[3] = least_loaded_node3
+            meta_data.append(curr_meta_data)
+
+        if (datanode1_response.success):
+            # Store Metadata Storage Operations
+            db.save_meta_data_namenode(username, filename, meta_data)
+            db.delete_user_file(username, filename)
+            db.save_user_file(username, filename)
+        return dfs_pb2.Ack(success=True, message="File Updated Successfully")
 
     def GetActiveIpChannelDict(self):
         self.GetAllAvailableIPAddresses()

@@ -11,7 +11,7 @@ network = output.decode('utf-8')
 # network = ast.literal_eval(network)
 network = json.loads(network)[0]
 
-config_file = json.loads(open("/usr/files/config.json", "r").read())
+config_file = json.loads(open("config.json", "r").read())
 config_file["containers"] = []
 
 for container in network["Containers"].values():

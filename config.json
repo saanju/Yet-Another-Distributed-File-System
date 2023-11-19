@@ -1,46 +1,46 @@
 {
   "containers": [
     {
-      "Name": "yet-another-distributed-file-system-ubuntu-4",
-      "EndpointID": "dfb9e049f46bad57cbf7ca7472b00fa1741aec65042730f452b4c185dd13da5c",
-      "MacAddress": "02:42:ac:14:00:05",
-      "IPv4Address": "172.20.0.5/16",
+      "Name": "yet-another-distributed-file-system-ubuntu-5",
+      "EndpointID": "497f454d9f1345b1437ae4930fdcee0d53a44c49db2830fb8ed887664276cca2",
+      "MacAddress": "02:42:ac:14:00:04",
+      "IPv4Address": "172.20.0.4/16",
       "IPv6Address": ""
     },
     {
-      "Name": "yet-another-distributed-file-system-ubuntu-5",
-      "EndpointID": "0ee3a5cabcf95db91ece874e56011e7d8b52a511116dec81d90e15e5f95639cd",
+      "Name": "yet-another-distributed-file-system-ubuntu-6",
+      "EndpointID": "98f8d35ab5e2e79594fc551c12e99c6d794187e5587648c81bff330e76eb29b3",
       "MacAddress": "02:42:ac:14:00:07",
       "IPv4Address": "172.20.0.7/16",
       "IPv6Address": ""
     },
     {
-      "Name": "yet-another-distributed-file-system-ubuntu-3",
-      "EndpointID": "e74839975c560f0a1a123de36e902054ec527bc28acd80bc732b074896230332",
-      "MacAddress": "02:42:ac:14:00:02",
-      "IPv4Address": "172.20.0.2/16",
+      "Name": "yet-another-distributed-file-system-ubuntu-4",
+      "EndpointID": "6dfa18ed4b7dec9915f07dccb51439c01c025efc04a8d8c490626e5f2bde5d9f",
+      "MacAddress": "02:42:ac:14:00:03",
+      "IPv4Address": "172.20.0.3/16",
       "IPv6Address": ""
     },
     {
-      "Name": "yet-another-distributed-file-system-ubuntu-6",
-      "EndpointID": "6c31ce2d251ff431e4c1b227ce19b584b7bb94c6e12c3182e4acae7b06e4647e",
-      "MacAddress": "02:42:ac:14:00:06",
-      "IPv4Address": "172.20.0.6/16",
+      "Name": "yet-another-distributed-file-system-ubuntu-3",
+      "EndpointID": "ae26a48fe7f2c7b682ccad196f85882dd44bb1da4ebcabbfe5386654ed4ab48a",
+      "MacAddress": "02:42:ac:14:00:02",
+      "IPv4Address": "172.20.0.2/16",
       "IPv6Address": ""
     }
   ],
   "namenode": {
     "Name": "yet-another-distributed-file-system-ubuntu-1",
-    "EndpointID": "61802d0bf9765607a60352e30d250a321e8f24652f6f9ac6133a673e3409ae09",
-    "MacAddress": "02:42:ac:14:00:03",
-    "IPv4Address": "172.20.0.3/16",
+    "EndpointID": "a9e9a7c219032b8731689b2ffcb0bd3f0ac14286bd26c0e926c54e2871898638",
+    "MacAddress": "02:42:ac:14:00:06",
+    "IPv4Address": "172.20.0.6/16",
     "IPv6Address": ""
   },
   "client": {
     "Name": "yet-another-distributed-file-system-ubuntu-2",
-    "EndpointID": "f561339dde370fe84cc1a1556e23b504eb95a297ae724a31bd6c5e63eb30eb8e",
-    "MacAddress": "02:42:ac:14:00:04",
-    "IPv4Address": "172.20.0.4/16",
+    "EndpointID": "1971b0ea3e51e43fb97892cc9c083d954814676d34920e0294a949c6f1b8b01d",
+    "MacAddress": "02:42:ac:14:00:05",
+    "IPv4Address": "172.20.0.5/16",
     "IPv6Address": ""
   }
 }
