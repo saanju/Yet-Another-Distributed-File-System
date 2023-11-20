@@ -29,22 +29,17 @@ class DFSRedisMetadata:
 
         r_conn.hset(self.DIRECTORY_KEY, key, json.dumps(directory_data))
 
-    def delete_directory(self, username, directory_path):
-        key = f"{username}:{directory_path}"
-        directory_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, key) or '{}')
+    def delete_directory(username, directory_path):
+    """Delete a directory and its contents."""
+    directory_key = get_directory_key(username, directory_path)
 
-        if 'children' in directory_data:
-            for child in directory_data['children']:
-                self._delete_directory_recursive(username, child)
+    # Get all keys under the directory key
+    keys = r_conn.keys(f"{directory_key}{KEY_SEPARATOR}*")
 
-        r_conn.hdel(self.DIRECTORY_KEY, key)
+    # Delete all keys associated with the directory
+    for key in keys:
+        r_conn.delete(key)
 
-    def _delete_directory_recursive(self, username, directory_data):
-        key = f"{username}:{directory_data['name']}"
-        if 'children' in directory_data:
-            for child in directory_data['children']:
-                self._delete_directory_recursive(username, child)
-        r_conn.hdel(self.DIRECTORY_KEY, key)
 
     def move_directory(self, username, source_path, destination_path):
         source_key = f"{username}:{source_path}"
@@ -62,6 +57,31 @@ class DFSRedisMetadata:
 
             r_conn.hset(self.DIRECTORY_KEY, destination_key, json.dumps(source_data))
             r_conn.hdel(self.DIRECTORY_KEY, source_key)
+    def get_directory_content(username, directory_path):
+    """Get the content (files and subdirectories) of a directory."""
+    directory_key = get_directory_key(username, directory_path)
+    
+    # Get all keys under the directory key
+    keys = r_conn.keys(f"{directory_key}{KEY_SEPARATOR}*")
+
+    content = []
+
+    for key in keys:
+        # Check if the key represents a subdirectory or file
+        key_type = r_conn.hget(key, "type").decode("utf-8")
+
+        if key_type == "directory":
+            # If it's a directory, add it to the content
+            subdir_path = key.decode("utf-8").split(KEY_SEPARATOR, 2)[2]
+            content.append({"type": "directory", "name": subdir_path})
+        elif key_type == "file":
+            # If it's a file, add it to the content along with metadata
+            filename = key.decode("utf-8").split(KEY_SEPARATOR)[-1]
+            metadata = json.loads(r_conn.hget(key, "metadata").decode("utf-8"))
+            content.append({"type": "file", "name": filename, "metadata": metadata})
+
+    return content
+
 
 def get_file_key(username, filename):
     """Generate a key for a file."""
