@@ -11,6 +11,58 @@ REDIS_PORT = int(os.getenv('REDIS_PORT'))
 r_conn = redis.StrictRedis(host='localhost', port=REDIS_PORT, db=0)
 KEY_SEPARATOR = "_"
 
+
+class DFSRedisMetadata:
+    def __init__(self):
+        self.DIRECTORY_KEY = 'directories'
+        self.FILE_KEY = 'files'
+
+    def create_directory(self, username, directory_name, parent_path=None):
+        key = f"{username}:{directory_name}"
+        directory_data = {'name': directory_name, 'type': 'directory', 'children': []}
+
+        if parent_path:
+            parent_key = f"{username}:{parent_path}"
+            parent_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, parent_key) or '{}')
+            parent_data['children'].append(directory_data)
+            r_conn.hset(self.DIRECTORY_KEY, parent_key, json.dumps(parent_data))
+
+        r_conn.hset(self.DIRECTORY_KEY, key, json.dumps(directory_data))
+
+    def delete_directory(self, username, directory_path):
+        key = f"{username}:{directory_path}"
+        directory_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, key) or '{}')
+
+        if 'children' in directory_data:
+            for child in directory_data['children']:
+                self._delete_directory_recursive(username, child)
+
+        r_conn.hdel(self.DIRECTORY_KEY, key)
+
+    def _delete_directory_recursive(self, username, directory_data):
+        key = f"{username}:{directory_data['name']}"
+        if 'children' in directory_data:
+            for child in directory_data['children']:
+                self._delete_directory_recursive(username, child)
+        r_conn.hdel(self.DIRECTORY_KEY, key)
+
+    def move_directory(self, username, source_path, destination_path):
+        source_key = f"{username}:{source_path}"
+        destination_key = f"{username}:{destination_path}"
+
+        source_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, source_key) or '{}')
+        destination_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, destination_key) or '{}')
+
+        if source_data:
+            if 'children' in source_data:
+                for child in source_data['children']:
+                    child_key = f"{username}:{destination_path}:{child['name']}"
+                    child['name'] = destination_path
+                    r_conn.hset(self.DIRECTORY_KEY, child_key, json.dumps(child))
+
+            r_conn.hset(self.DIRECTORY_KEY, destination_key, json.dumps(source_data))
+            r_conn.hdel(self.DIRECTORY_KEY, source_key)
+
 def get_file_key(username, filename):
     """Generate a key for a file."""
     return f"{username}{KEY_SEPARATOR}{filename}"
