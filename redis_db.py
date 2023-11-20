@@ -11,25 +11,25 @@ REDIS_PORT = int(os.getenv('REDIS_PORT'))
 r_conn = redis.StrictRedis(host='localhost', port=REDIS_PORT, db=0)
 KEY_SEPARATOR = "_"
 
+def get_directory_key(username, directory_path):
+    return f"{username}{KEY_SEPARATOR}{directory_path}"
 
-class DFSRedisMetadata:
-    def __init__(self):
-        self.DIRECTORY_KEY = 'directories'
-        self.FILE_KEY = 'files'
+def get_file_key(username, directory_path, filename):
+    return f"{username}{KEY_SEPARATOR}{directory_path}{KEY_SEPARATOR}{filename}"
 
-    def create_directory(self, username, directory_name, parent_path=None):
-        key = f"{username}:{directory_name}"
-        directory_data = {'name': directory_name, 'type': 'directory', 'children': []}
+def create_directory(username, directory_name, parent_path=None):
+    key = get_directory_key(username, directory_name)
+    directory_data = {'name': directory_name, 'type': 'directory', 'children': []}
 
-        if parent_path:
-            parent_key = f"{username}:{parent_path}"
-            parent_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, parent_key) or '{}')
-            parent_data['children'].append(directory_data)
-            r_conn.hset(self.DIRECTORY_KEY, parent_key, json.dumps(parent_data))
+    if parent_path:
+        parent_key = get_directory_key(username, parent_path)
+        parent_data = json.loads(r_conn.hget('directories', parent_key) or '{}')
+        parent_data['children'].append(directory_data)
+        r_conn.hset('directories', parent_key, json.dumps(parent_data))
 
-        r_conn.hset(self.DIRECTORY_KEY, key, json.dumps(directory_data))
+    r_conn.hset('directories', key, json.dumps(directory_data))
 
-    def delete_directory(username, directory_path):
+def delete_directory(username, directory_path):
     """Delete a directory and its contents."""
     directory_key = get_directory_key(username, directory_path)
 
@@ -40,32 +40,37 @@ class DFSRedisMetadata:
     for key in keys:
         r_conn.delete(key)
 
-    def move_directory(username, source_directory, destination_directory):
-    
+def move_directory(username, source_directory, destination_directory):
     source_directory_key = get_directory_key(username, source_directory)
-    files_and_subdirectories = get_data(source_directory_key)
+    files_and_subdirectories = json.loads(r_conn.hget('directories', source_directory_key) or '{}')['children']
 
     if not files_and_subdirectories:
         print(f"Source directory '{source_directory}' not found.")
         return
 
-    
     destination_directory_key = get_directory_key(username, destination_directory)
-    set_data(destination_directory_key, json.dumps([]))  # Initialize an empty directory
+    r_conn.hset('directories', destination_directory_key, json.dumps({'name': destination_directory, 'type': 'directory', 'children': []}))
 
-    
     for item in files_and_subdirectories:
         move_item(username, source_directory, destination_directory, item)
 
     delete_directory(username, source_directory)
 
-    def set_data(key, value):
+def move_item(username, source_directory, destination_directory, item):
+    source_item_key = get_directory_key(username, source_directory) + KEY_SEPARATOR + item['name']
+    destination_item_key = get_directory_key(username, destination_directory) + KEY_SEPARATOR + item['name']
+
+    item_data = json.loads(r_conn.hget('directories', source_item_key) or '{}')
+    r_conn.hset('directories', destination_item_key, json.dumps(item_data))
+    r_conn.hdel('directories', source_item_key)
+
+def set_data(key, value):
     r_conn.set(key, value)
 
-    def get_directory_content(username, directory_path):
+def get_directory_content(username, directory_path):
     """Get the content (files and subdirectories) of a directory."""
     directory_key = get_directory_key(username, directory_path)
-    
+
     # Get all keys under the directory key
     keys = r_conn.keys(f"{directory_key}{KEY_SEPARATOR}*")
 
@@ -73,20 +78,19 @@ class DFSRedisMetadata:
 
     for key in keys:
         # Check if the key represents a subdirectory or file
-        key_type = r_conn.hget(key, "type").decode("utf-8")
+        key_type = json.loads(r_conn.hget(key, "type") or '{}').get('type')
 
         if key_type == "directory":
             # If it's a directory, add it to the content
-            subdir_path = key.decode("utf-8").split(KEY_SEPARATOR, 2)[2]
+            subdir_path = key.decode("utf-8").split(KEY_SEPARATOR, 2)[-1]
             content.append({"type": "directory", "name": subdir_path})
         elif key_type == "file":
             # If it's a file, add it to the content along with metadata
             filename = key.decode("utf-8").split(KEY_SEPARATOR)[-1]
-            metadata = json.loads(r_conn.hget(key, "metadata").decode("utf-8"))
+            metadata = json.loads(r_conn.hget(key, "metadata") or '{}')
             content.append({"type": "file", "name": filename, "metadata": metadata})
 
     return content
-
 
 def get_file_key(username, filename):
     """Generate a key for a file."""
