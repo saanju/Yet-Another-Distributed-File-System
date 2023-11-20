@@ -11,6 +11,57 @@ REDIS_PORT = int(os.getenv('REDIS_PORT'))
 r_conn = redis.StrictRedis(host='localhost', port=REDIS_PORT, db=0)
 
 
+def get_file_key(username, filename):
+    """Generate a key for a file."""
+    return f"{username}{KEY_SEPARATOR}{filename}"
+
+def get_directory_key(username, directory_path):
+    """Generate a key for a directory."""
+    return f"{username}{KEY_SEPARATOR}{directory_path}"
+
+def save_file(username, filename, content):
+    """Create or update a file in Redis."""
+    file_key = get_file_key(username, filename)
+    r_conn.set(file_key, content)
+
+def delete_file(username, filename):
+    """Delete a file from Redis."""
+    file_key = get_file_key(username, filename)
+    r_conn.delete(file_key)
+
+def move_file(username, old_filename, new_filename):
+    """Move a file to a new location in Redis."""
+    old_file_key = get_file_key(username, old_filename)
+    new_file_key = get_file_key(username, new_filename)
+    content = r_conn.get(old_file_key)
+    
+    # Delete the old file
+    delete_file(username, old_filename)
+    
+    # Save the content to the new location
+    save_file(username, new_filename, content)
+
+def copy_file(username, source_filename, destination_filename):
+    """Copy a file to a new location in Redis."""
+    source_file_key = get_file_key(username, source_filename)
+    destination_file_key = get_file_key(username, destination_filename)
+    content = r_conn.get(source_file_key)
+    
+    # Save the content to the new location
+    save_file(username, destination_filename, content)
+
+def list_directory(username, directory_path):
+    """List files and directories within a directory in Redis."""
+    directory_key = get_directory_key(username, directory_path)
+    keys = r_conn.keys(f"{directory_key}{KEY_SEPARATOR}*")
+    
+    files_and_directories = []
+    for key in keys:
+        _, name = key.split(KEY_SEPARATOR, 1)
+        files_and_directories.append(name)
+    
+    return files_and_directories
+
 def save_meta_data_namenode(username, filename, meta_data):
     key = username+"_"+filename
     meta_data_json = json.dumps(meta_data)
