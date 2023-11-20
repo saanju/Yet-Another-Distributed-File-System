@@ -104,6 +104,16 @@ class DataTransferServiceStub(object):
                 request_serializer=dfs__pb2.MetaDataInfo.SerializeToString,
                 response_deserializer=dfs__pb2.Ack.FromString,
                 )
+        self.UpdateFileUploadMeta = channel.unary_unary(
+                '/dfs.DataTransferService/UpdateFileUploadMeta',
+                request_serializer=dfs__pb2.FileDirInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
+        self.UpdateFileDeleteMeta = channel.unary_unary(
+                '/dfs.DataTransferService/UpdateFileDeleteMeta',
+                request_serializer=dfs__pb2.FileDirInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
 
 
 class DataTransferServiceServicer(object):
@@ -217,6 +227,18 @@ class DataTransferServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdateFileUploadMeta(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateFileDeleteMeta(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DataTransferServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -308,6 +330,16 @@ def add_DataTransferServiceServicer_to_server(servicer, server):
             'Traverse': grpc.unary_unary_rpc_method_handler(
                     servicer.Traverse,
                     request_deserializer=dfs__pb2.MetaDataInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'UpdateFileUploadMeta': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateFileUploadMeta,
+                    request_deserializer=dfs__pb2.FileDirInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'UpdateFileDeleteMeta': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateFileDeleteMeta,
+                    request_deserializer=dfs__pb2.FileDirInfo.FromString,
                     response_serializer=dfs__pb2.Ack.SerializeToString,
             ),
     }
@@ -622,6 +654,40 @@ class DataTransferService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/Traverse',
             dfs__pb2.MetaDataInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateFileUploadMeta(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/UpdateFileUploadMeta',
+            dfs__pb2.FileDirInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateFileDeleteMeta(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/UpdateFileDeleteMeta',
+            dfs__pb2.FileDirInfo.SerializeToString,
             dfs__pb2.Ack.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

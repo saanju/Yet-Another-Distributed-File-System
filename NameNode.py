@@ -106,11 +106,31 @@ class NameNodeServicer(dfs_pb2_grpc.DataTransferServiceServicer):
         else:
             return dfs_pb2.Ack(success=False, message="Failed")
 
+    def UpdateFileUploadMeta(self, request, context):
+        directory = request.directory
+        username = request.username
+        filename = request.filename
+        res = db.update_file_dir_meta(username, filename, directory)
+        if (res == 0):
+            return dfs_pb2.Ack(success=True, message="Done")
+        else:
+            return dfs_pb2.Ack(success=False, message="Failed")
+
+    def UpdateFileDeleteMeta(self, request, context):
+        directory = request.directory
+        username = request.username
+        filename = request.filename
+        res = db.delete_file_dir_meta(username, filename, directory)
+        if (res == 0):
+            return dfs_pb2.Ack(success=True, message="Done")
+        else:
+            return dfs_pb2.Ack(success=False, message="Failed")
+
     def ListDirectories(self, request, context):
         username = request.username
         directory = request.directory1
         res = db.list_file_directories(username, directory)
-        if (res != []):
+        if (res != [-1]):
             return dfs_pb2.Ack(success=True, message=json.dumps(res))
         else:
             return dfs_pb2.Ack(success=False, message=json.dumps({"message": "Failed"}))

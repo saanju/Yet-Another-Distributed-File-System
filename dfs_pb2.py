@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tdfs.proto\x12\x03\x64\x66s\"Y\n\x0cMetaDataInfo\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x12\n\ndirectory1\x18\x02 \x01(\t\x12\x12\n\ndirectory2\x18\x03 \x01(\t\x12\x0f\n\x07\x63ommand\x18\x04 \x01(\t\"\x15\n\x05testM\x12\x0c\n\x04word\x18\x01 \x01(\t\"H\n\rDataNodeStats\x12\x11\n\tcpu_usage\x18\x01 \x01(\t\x12\x12\n\ndisk_space\x18\x02 \x01(\t\x12\x10\n\x08used_mem\x18\x03 \x01(\t\"\x07\n\x05\x45mpty\"\x1c\n\x08UserInfo\x12\x10\n\x08username\x18\x01 \x01(\t\"2\n\x0cUserFileList\x12\x11\n\tfilenames\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\".\n\x08\x46ileInfo\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\"\'\n\x03\x41\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"<\n\x08\x46ileData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\"Q\n\rFileDataChunk\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\x0e\n\x06seq_no\x18\x04 \x01(\x05\"G\n\x11\x46ileDataChunkInfo\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0e\n\x06seq_no\x18\x03 \x01(\x05\x32\xcf\x06\n\x13\x44\x61taTransferService\x12!\n\x07Message\x12\n.dfs.testM\x1a\n.dfs.testM\x12\'\n\nUploadFile\x12\r.dfs.FileData\x1a\x08.dfs.Ack(\x01\x12.\n\x0c\x44ownloadFile\x12\r.dfs.FileInfo\x1a\r.dfs.FileData0\x01\x12%\n\nFileSearch\x12\r.dfs.FileInfo\x1a\x08.dfs.Ack\x12*\n\rReplicateFile\x12\r.dfs.FileData\x1a\x08.dfs.Ack(\x01\x12,\n\x08\x46ileList\x12\r.dfs.UserInfo\x1a\x11.dfs.UserFileList\x12%\n\nFileDelete\x12\r.dfs.FileInfo\x1a\x08.dfs.Ack\x12\'\n\nUpdateFile\x12\r.dfs.FileData\x1a\x08.dfs.Ack(\x01\x12\x30\n\x0eStoreFileChunk\x12\x12.dfs.FileDataChunk\x1a\x08.dfs.Ack(\x01\x12<\n\x0cGetFileChunk\x12\x16.dfs.FileDataChunkInfo\x1a\x12.dfs.FileDataChunk0\x01\x12\x31\n\x0fIsDataNodeAlive\x12\n.dfs.Empty\x1a\x12.dfs.DataNodeStats\x12\x33\n\x0f\x44\x65leteFileChunk\x12\x16.dfs.FileDataChunkInfo\x1a\x08.dfs.Ack\x12.\n\x0f\x43reateDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12.\n\x0f\x44\x65leteDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12,\n\rMoveDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12,\n\rCopyDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12.\n\x0fListDirectories\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12\'\n\x08Traverse\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.AckB\x02H\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tdfs.proto\x12\x03\x64\x66s\"D\n\x0b\x46ileDirInfo\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x11\n\tdirectory\x18\x03 \x01(\t\"Y\n\x0cMetaDataInfo\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x12\n\ndirectory1\x18\x02 \x01(\t\x12\x12\n\ndirectory2\x18\x03 \x01(\t\x12\x0f\n\x07\x63ommand\x18\x04 \x01(\t\"\x15\n\x05testM\x12\x0c\n\x04word\x18\x01 \x01(\t\"H\n\rDataNodeStats\x12\x11\n\tcpu_usage\x18\x01 \x01(\t\x12\x12\n\ndisk_space\x18\x02 \x01(\t\x12\x10\n\x08used_mem\x18\x03 \x01(\t\"\x07\n\x05\x45mpty\"\x1c\n\x08UserInfo\x12\x10\n\x08username\x18\x01 \x01(\t\"2\n\x0cUserFileList\x12\x11\n\tfilenames\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\".\n\x08\x46ileInfo\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\"\'\n\x03\x41\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"<\n\x08\x46ileData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\"Q\n\rFileDataChunk\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\x0e\n\x06seq_no\x18\x04 \x01(\x05\"G\n\x11\x46ileDataChunkInfo\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0e\n\x06seq_no\x18\x03 \x01(\x05\x32\xb7\x07\n\x13\x44\x61taTransferService\x12!\n\x07Message\x12\n.dfs.testM\x1a\n.dfs.testM\x12\'\n\nUploadFile\x12\r.dfs.FileData\x1a\x08.dfs.Ack(\x01\x12.\n\x0c\x44ownloadFile\x12\r.dfs.FileInfo\x1a\r.dfs.FileData0\x01\x12%\n\nFileSearch\x12\r.dfs.FileInfo\x1a\x08.dfs.Ack\x12*\n\rReplicateFile\x12\r.dfs.FileData\x1a\x08.dfs.Ack(\x01\x12,\n\x08\x46ileList\x12\r.dfs.UserInfo\x1a\x11.dfs.UserFileList\x12%\n\nFileDelete\x12\r.dfs.FileInfo\x1a\x08.dfs.Ack\x12\'\n\nUpdateFile\x12\r.dfs.FileData\x1a\x08.dfs.Ack(\x01\x12\x30\n\x0eStoreFileChunk\x12\x12.dfs.FileDataChunk\x1a\x08.dfs.Ack(\x01\x12<\n\x0cGetFileChunk\x12\x16.dfs.FileDataChunkInfo\x1a\x12.dfs.FileDataChunk0\x01\x12\x31\n\x0fIsDataNodeAlive\x12\n.dfs.Empty\x1a\x12.dfs.DataNodeStats\x12\x33\n\x0f\x44\x65leteFileChunk\x12\x16.dfs.FileDataChunkInfo\x1a\x08.dfs.Ack\x12.\n\x0f\x43reateDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12.\n\x0f\x44\x65leteDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12,\n\rMoveDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12,\n\rCopyDirectory\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12.\n\x0fListDirectories\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12\'\n\x08Traverse\x12\x11.dfs.MetaDataInfo\x1a\x08.dfs.Ack\x12\x32\n\x14UpdateFileUploadMeta\x12\x10.dfs.FileDirInfo\x1a\x08.dfs.Ack\x12\x32\n\x14UpdateFileDeleteMeta\x12\x10.dfs.FileDirInfo\x1a\x08.dfs.AckB\x02H\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -21,28 +21,30 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'dfs_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'H\001'
-  _globals['_METADATAINFO']._serialized_start=18
-  _globals['_METADATAINFO']._serialized_end=107
-  _globals['_TESTM']._serialized_start=109
-  _globals['_TESTM']._serialized_end=130
-  _globals['_DATANODESTATS']._serialized_start=132
-  _globals['_DATANODESTATS']._serialized_end=204
-  _globals['_EMPTY']._serialized_start=206
-  _globals['_EMPTY']._serialized_end=213
-  _globals['_USERINFO']._serialized_start=215
-  _globals['_USERINFO']._serialized_end=243
-  _globals['_USERFILELIST']._serialized_start=245
-  _globals['_USERFILELIST']._serialized_end=295
-  _globals['_FILEINFO']._serialized_start=297
-  _globals['_FILEINFO']._serialized_end=343
-  _globals['_ACK']._serialized_start=345
-  _globals['_ACK']._serialized_end=384
-  _globals['_FILEDATA']._serialized_start=386
-  _globals['_FILEDATA']._serialized_end=446
-  _globals['_FILEDATACHUNK']._serialized_start=448
-  _globals['_FILEDATACHUNK']._serialized_end=529
-  _globals['_FILEDATACHUNKINFO']._serialized_start=531
-  _globals['_FILEDATACHUNKINFO']._serialized_end=602
-  _globals['_DATATRANSFERSERVICE']._serialized_start=605
-  _globals['_DATATRANSFERSERVICE']._serialized_end=1452
+  _globals['_FILEDIRINFO']._serialized_start=18
+  _globals['_FILEDIRINFO']._serialized_end=86
+  _globals['_METADATAINFO']._serialized_start=88
+  _globals['_METADATAINFO']._serialized_end=177
+  _globals['_TESTM']._serialized_start=179
+  _globals['_TESTM']._serialized_end=200
+  _globals['_DATANODESTATS']._serialized_start=202
+  _globals['_DATANODESTATS']._serialized_end=274
+  _globals['_EMPTY']._serialized_start=276
+  _globals['_EMPTY']._serialized_end=283
+  _globals['_USERINFO']._serialized_start=285
+  _globals['_USERINFO']._serialized_end=313
+  _globals['_USERFILELIST']._serialized_start=315
+  _globals['_USERFILELIST']._serialized_end=365
+  _globals['_FILEINFO']._serialized_start=367
+  _globals['_FILEINFO']._serialized_end=413
+  _globals['_ACK']._serialized_start=415
+  _globals['_ACK']._serialized_end=454
+  _globals['_FILEDATA']._serialized_start=456
+  _globals['_FILEDATA']._serialized_end=516
+  _globals['_FILEDATACHUNK']._serialized_start=518
+  _globals['_FILEDATACHUNK']._serialized_end=599
+  _globals['_FILEDATACHUNKINFO']._serialized_start=601
+  _globals['_FILEDATACHUNKINFO']._serialized_end=672
+  _globals['_DATATRANSFERSERVICE']._serialized_start=675
+  _globals['_DATATRANSFERSERVICE']._serialized_end=1626
 # @@protoc_insertion_point(module_scope)

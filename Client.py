@@ -7,14 +7,21 @@ import time
 import os
 import json
 import sys
+Username = ""
+Filename = ""
 
 
 def get_file_chunks():
+    global Username
+    global Filename
 
     MAX_CHUNK_SIZE = 4000000
 
     username = input("Enter Username : ")
     filename = input("Enter Filename : ")
+
+    Username = username
+    Filename = filename
 
     file_to_upload = os.path.join('/usr/files/files', filename)
     s_time = time.time()
@@ -33,8 +40,11 @@ def get_file_chunks():
 
 def upload_file(stub):
     data_chunks = get_file_chunks()
+    directory_path = input("Enter directory path : ")
     response = stub.UploadFile(data_chunks)
     if (response.success):
+        response2 = stub.UpdateFileUploadMeta(dfs_pb2.FileDirInfo(
+            username=Username, filename=Filename, directory=directory_path))
         print("File Uploaded Successfully")
     else:
         print("ERROR : Failed to Upload Message : ", response.message)
@@ -43,6 +53,7 @@ def upload_file(stub):
 def download_file(stub):
     username = input("Enter Username : ")
     filename = input("Enter Filename : ")
+    directory_path = input("Enter directory path : ")
     data = bytes("", "utf-8")
     s_time = time.time()
     response_iter = stub.DownloadFile(
@@ -65,6 +76,16 @@ def download_file(stub):
 def delete_file(stub):
     username = input("Enter Username : ")
     filename = input("Enter Filename : ")
+    directory_path = input("Enter directory path : ")
+    response = stub.FileDelete(dfs_pb2.FileInfo(
+        username=username, filename=filename))
+    print(response.message)
+    if (response.success):
+        response2 = stub.UpdateFileDeleteMeta(dfs_pb2.FileDirInfo(
+            username=Username, filename=Filename, directory=directory_path))
+
+
+def delete_file_with_username_filename(stub, username, filename):
     response = stub.FileDelete(dfs_pb2.FileInfo(
         username=username, filename=filename))
     print(response.message)
@@ -113,6 +134,20 @@ def create_directory(stub):
         print(response.message)
 
 
+def delete_directory_contents(stub, username, directory_content):
+    print("here", type(directory_content), len(directory_content))
+    if (len(directory_content) == 0):
+        return
+    for item in directory_content:
+        if ("." in item):
+            delete_file_with_username_filename(stub, username, item)
+        else:
+            deleted_directory_contents = delete_directory_with_username_directoryname(
+                stub, username, item)
+            delete_directory_contents(
+                stub, username, deleted_directory_contents)
+
+
 def delete_directory(stub):
     username = input("Enter Username : ")
     directory = input("Enter directory path to be deleted : ")
@@ -120,8 +155,22 @@ def delete_directory(stub):
         username=username, directory1=directory, directory2="", command=""))
     if (response.success):
         print(response.message)
+        deleted_directory_contents = json.loads(response.message)
+        if (deleted_directory_contents == "[]"):
+            return
+        delete_directory_contents(stub, username, deleted_directory_contents)
     else:
         print(response.message)
+
+
+def delete_directory_with_username_directoryname(stub, username, directory):
+    response = stub.DeleteDirectory(dfs_pb2.MetaDataInfo(
+        username=username, directory1=directory, directory2="", command=""))
+    if (response.success):
+        print(response.message)
+    else:
+        print(response.message)
+    return json.loads(response.message)
 
 
 def move_directory(stub):
@@ -165,11 +214,12 @@ curr_dir = ""
 def traverse(stub):
     global curr_dir
     username = input("Enter Username : ")
-    curr_dir = username+"/root"
-    sent_dir = "root"
+    curr_dir = username+"_root"
+    sent_dir = ""
     while (True):
-        command = input(f"{curr_dir} ")
+        command = input(f"{curr_dir} $")
         command_split = command.split(" ")
+        print(command_split)
         if (command_split[1] == ".."):
             response = stub.Traverse(dfs_pb2.MetaDataInfo(
                 username=username, directory1=sent_dir, directory2=command_split[1], command=command_split[0]))
@@ -184,7 +234,10 @@ def traverse(stub):
             response = stub.Traverse(dfs_pb2.MetaDataInfo(
                 username=username, directory1=sent_dir, directory2=command_split[1], command=command_split[0]))
             if (response.success):
-                sent_dir += f"/{command_split[1]}"
+                if (sent_dir == ""):
+                    sent_dir = command_split[1]
+                else:
+                    sent_dir += f"/{command_split[1]}"
                 curr_dir += f"/{command_split[1]}"
 
 

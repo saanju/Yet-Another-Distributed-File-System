@@ -23,6 +23,14 @@ service DataTransferService {
 	rpc CopyDirectory(MetaDataInfo) returns (Ack);
 	rpc ListDirectories(MetaDataInfo) returns (Ack);
 	rpc Traverse(MetaDataInfo) returns (Ack);
+	rpc UpdateFileUploadMeta(FileDirInfo) returns (Ack);
+	rpc UpdateFileDeleteMeta(FileDirInfo) returns (Ack);
+}
+
+message FileDirInfo{
+	string username=1;
+	string filename=2;
+	string directory=3;
 }
 
 message MetaDataInfo {
