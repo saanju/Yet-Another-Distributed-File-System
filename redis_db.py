@@ -9,7 +9,7 @@ load_dotenv()
 REDIS_PORT = int(os.getenv('REDIS_PORT'))
 
 r_conn = redis.StrictRedis(host='localhost', port=REDIS_PORT, db=0)
-KEY_SEPARATOR = ":"
+KEY_SEPARATOR = "_"
 
 def get_file_key(username, filename):
     """Generate a key for a file."""
