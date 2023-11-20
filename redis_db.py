@@ -40,23 +40,28 @@ class DFSRedisMetadata:
     for key in keys:
         r_conn.delete(key)
 
+    def move_directory(username, source_directory, destination_directory):
+    
+    source_directory_key = get_directory_key(username, source_directory)
+    files_and_subdirectories = get_data(source_directory_key)
 
-    def move_directory(self, username, source_path, destination_path):
-        source_key = f"{username}:{source_path}"
-        destination_key = f"{username}:{destination_path}"
+    if not files_and_subdirectories:
+        print(f"Source directory '{source_directory}' not found.")
+        return
 
-        source_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, source_key) or '{}')
-        destination_data = json.loads(r_conn.hget(self.DIRECTORY_KEY, destination_key) or '{}')
+    
+    destination_directory_key = get_directory_key(username, destination_directory)
+    set_data(destination_directory_key, json.dumps([]))  # Initialize an empty directory
 
-        if source_data:
-            if 'children' in source_data:
-                for child in source_data['children']:
-                    child_key = f"{username}:{destination_path}:{child['name']}"
-                    child['name'] = destination_path
-                    r_conn.hset(self.DIRECTORY_KEY, child_key, json.dumps(child))
+    
+    for item in files_and_subdirectories:
+        move_item(username, source_directory, destination_directory, item)
 
-            r_conn.hset(self.DIRECTORY_KEY, destination_key, json.dumps(source_data))
-            r_conn.hdel(self.DIRECTORY_KEY, source_key)
+    delete_directory(username, source_directory)
+
+    def set_data(key, value):
+    r_conn.set(key, value)
+
     def get_directory_content(username, directory_path):
     """Get the content (files and subdirectories) of a directory."""
     directory_key = get_directory_key(username, directory_path)
