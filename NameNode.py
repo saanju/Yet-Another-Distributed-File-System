@@ -68,6 +68,64 @@ class NameNodeServicer(dfs_pb2_grpc.DataTransferServiceServicer):
         else:
             return dfs_pb2.Ack(success=False, message=f"File {filename} for user {username} does not exist")
 
+    def CreateDirectory(self, request, context):
+        username = request.username
+        directory = request.directory1
+        res = db.create_directory(username, directory)
+        if (res != "Done"):
+            return dfs_pb2.Ack(success=False, message=res)
+        else:
+            return dfs_pb2.Ack(success=True, message=res)
+
+    def DeleteDirectory(self, request, context):
+        username = request.username
+        directory = request.directory1
+        res = db.delete_directory(username, directory)
+        if (res == []):
+            return dfs_pb2.Ack(success=False, message=json.dumps(res))
+        else:
+            return dfs_pb2.Ack(success=True, message=json.dumps(res))
+
+    def MoveDirectory(self, request, context):
+        username = request.username
+        source_directory = request.directory1
+        dest_directory = request.directory2
+        res = db.move_directory(username, source_directory, dest_directory)
+        if (res != -1):
+            return dfs_pb2.Ack(success=True, message="Done")
+        else:
+            return dfs_pb2.Ack(success=False, message="Failed")
+
+    def CopyDirectory(self, request, context):
+        username = request.username
+        source_directory = request.directory1
+        dest_directory = request.directory2
+        res = db.copy_directory(username, source_directory, dest_directory)
+        if (res != -1):
+            return dfs_pb2.Ack(success=True, message="Done")
+        else:
+            return dfs_pb2.Ack(success=False, message="Failed")
+
+    def ListDirectories(self, request, context):
+        username = request.username
+        directory = request.directory1
+        res = db.list_file_directories(username, directory)
+        if (res != []):
+            return dfs_pb2.Ack(success=True, message=json.dumps(res))
+        else:
+            return dfs_pb2.Ack(success=False, message=json.dumps({"message": "Failed"}))
+
+    def Traverse(self, request, context):
+        username = request.username
+        curr_directory = request.directory1
+        dest_directory = request.directory2
+        command = request.command
+        res = db.traverse(username, curr_directory, command, dest_directory)
+        if (res != []):
+            return dfs_pb2.Ack(success=True, message=json.dumps(res))
+        else:
+            return dfs_pb2.Ack(success=False, message=json.dumps({"message": "Failed"}))
+
     def FileList(self, request, context):
         username = request.username
         if (db.key_exists(username) == False):

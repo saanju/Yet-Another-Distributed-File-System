@@ -74,6 +74,36 @@ class DataTransferServiceStub(object):
                 request_serializer=dfs__pb2.FileDataChunkInfo.SerializeToString,
                 response_deserializer=dfs__pb2.Ack.FromString,
                 )
+        self.CreateDirectory = channel.unary_unary(
+                '/dfs.DataTransferService/CreateDirectory',
+                request_serializer=dfs__pb2.MetaDataInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
+        self.DeleteDirectory = channel.unary_unary(
+                '/dfs.DataTransferService/DeleteDirectory',
+                request_serializer=dfs__pb2.MetaDataInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
+        self.MoveDirectory = channel.unary_unary(
+                '/dfs.DataTransferService/MoveDirectory',
+                request_serializer=dfs__pb2.MetaDataInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
+        self.CopyDirectory = channel.unary_unary(
+                '/dfs.DataTransferService/CopyDirectory',
+                request_serializer=dfs__pb2.MetaDataInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
+        self.ListDirectories = channel.unary_unary(
+                '/dfs.DataTransferService/ListDirectories',
+                request_serializer=dfs__pb2.MetaDataInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
+        self.Traverse = channel.unary_unary(
+                '/dfs.DataTransferService/Traverse',
+                request_serializer=dfs__pb2.MetaDataInfo.SerializeToString,
+                response_deserializer=dfs__pb2.Ack.FromString,
+                )
 
 
 class DataTransferServiceServicer(object):
@@ -151,6 +181,42 @@ class DataTransferServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def CreateDirectory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteDirectory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MoveDirectory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CopyDirectory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListDirectories(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Traverse(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DataTransferServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -212,6 +278,36 @@ def add_DataTransferServiceServicer_to_server(servicer, server):
             'DeleteFileChunk': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteFileChunk,
                     request_deserializer=dfs__pb2.FileDataChunkInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'CreateDirectory': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateDirectory,
+                    request_deserializer=dfs__pb2.MetaDataInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'DeleteDirectory': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteDirectory,
+                    request_deserializer=dfs__pb2.MetaDataInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'MoveDirectory': grpc.unary_unary_rpc_method_handler(
+                    servicer.MoveDirectory,
+                    request_deserializer=dfs__pb2.MetaDataInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'CopyDirectory': grpc.unary_unary_rpc_method_handler(
+                    servicer.CopyDirectory,
+                    request_deserializer=dfs__pb2.MetaDataInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'ListDirectories': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListDirectories,
+                    request_deserializer=dfs__pb2.MetaDataInfo.FromString,
+                    response_serializer=dfs__pb2.Ack.SerializeToString,
+            ),
+            'Traverse': grpc.unary_unary_rpc_method_handler(
+                    servicer.Traverse,
+                    request_deserializer=dfs__pb2.MetaDataInfo.FromString,
                     response_serializer=dfs__pb2.Ack.SerializeToString,
             ),
     }
@@ -424,6 +520,108 @@ class DataTransferService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/DeleteFileChunk',
             dfs__pb2.FileDataChunkInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CreateDirectory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/CreateDirectory',
+            dfs__pb2.MetaDataInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteDirectory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/DeleteDirectory',
+            dfs__pb2.MetaDataInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def MoveDirectory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/MoveDirectory',
+            dfs__pb2.MetaDataInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CopyDirectory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/CopyDirectory',
+            dfs__pb2.MetaDataInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListDirectories(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/ListDirectories',
+            dfs__pb2.MetaDataInfo.SerializeToString,
+            dfs__pb2.Ack.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Traverse(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/dfs.DataTransferService/Traverse',
+            dfs__pb2.MetaDataInfo.SerializeToString,
             dfs__pb2.Ack.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

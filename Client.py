@@ -102,6 +102,92 @@ def get_list_of_user_file(stub):
             print(file)
 
 
+def create_directory(stub):
+    username = input("Enter Username : ")
+    directory = input("Enter directory path to be created : ")
+    response = stub.CreateDirectory(dfs_pb2.MetaDataInfo(
+        username=username, directory1=directory, directory2="", command=""))
+    if (response.success):
+        print(response.message)
+    else:
+        print(response.message)
+
+
+def delete_directory(stub):
+    username = input("Enter Username : ")
+    directory = input("Enter directory path to be deleted : ")
+    response = stub.DeleteDirectory(dfs_pb2.MetaDataInfo(
+        username=username, directory1=directory, directory2="", command=""))
+    if (response.success):
+        print(response.message)
+    else:
+        print(response.message)
+
+
+def move_directory(stub):
+    username = input("Enter Username : ")
+    src_directory = input("Enter source directory path : ")
+    dest_directory = input("Enter destination directory path : ")
+    response = stub.MoveDirectory(dfs_pb2.MetaDataInfo(
+        username=username, directory1=src_directory, directory2=dest_directory, command=""))
+    if (response.success):
+        print(response.message)
+    else:
+        print(response.message)
+
+
+def copy_directory(stub):
+    username = input("Enter Username : ")
+    src_directory = input("Enter source directory path : ")
+    dest_directory = input("Enter destination directory path : ")
+    response = stub.CopyDirectory(dfs_pb2.MetaDataInfo(
+        username=username, directory1=src_directory, directory2=dest_directory, command=""))
+    if (response.success):
+        print(response.message)
+    else:
+        print(response.message)
+
+
+def list_directories(stub):
+    username = input("Enter Username : ")
+    directory = input("Enter directory path : ")
+    response = stub.ListDirectories(dfs_pb2.MetaDataInfo(
+        username=username, directory1=directory, directory2="", command=""))
+    if (response.success):
+        print(response.message)
+    else:
+        print(response.message)
+
+
+curr_dir = ""
+
+
+def traverse(stub):
+    global curr_dir
+    username = input("Enter Username : ")
+    curr_dir = username+"/root"
+    sent_dir = "root"
+    while (True):
+        command = input(f"{curr_dir} ")
+        command_split = command.split(" ")
+        if (command_split[1] == ".."):
+            response = stub.Traverse(dfs_pb2.MetaDataInfo(
+                username=username, directory1=sent_dir, directory2=command_split[1], command=command_split[0]))
+            if (response.success):
+                sent_dir_split = sent_dir.split("/")
+                sent_dir_split.pop()
+                sent_dir = "/".join(sent_dir_split)
+                curr_dir_split = curr_dir.split("/")
+                curr_dir_split.pop()
+                curr_dir = "/".join(curr_dir_split)
+        else:
+            response = stub.Traverse(dfs_pb2.MetaDataInfo(
+                username=username, directory1=sent_dir, directory2=command_split[1], command=command_split[0]))
+            if (response.success):
+                sent_dir += f"/{command_split[1]}"
+                curr_dir += f"/{command_split[1]}"
+
+
 def get_user_input(stub):
     print("==================================================")
     print("1. Upload a file")
@@ -110,6 +196,12 @@ def get_user_input(stub):
     print("4. Check a file in DFS")
     print("5. Update a file in DFS")
     print("6. Get all file for a User")
+    print("7. Metadata Op: Create Directory")
+    print("8. Metadata Op: Delete Directory")
+    print("9. Metadata Op: Move Directory")
+    print("10. Metadata Op: Copy Directory")
+    print("11. Metadata Op: List Directories")
+    print("12. Metadata Op: Traverse Directories")
     print("==================================================")
     selected_option = input("Please Choose an Input : \n")
 
@@ -125,6 +217,18 @@ def get_user_input(stub):
         update_file(stub)
     elif (selected_option == '6'):
         get_list_of_user_file(stub)
+    elif (selected_option == '7'):
+        create_directory(stub)
+    elif (selected_option == '8'):
+        delete_directory(stub)
+    elif (selected_option == '9'):
+        move_directory(stub)
+    elif (selected_option == '10'):
+        copy_directory(stub)
+    elif (selected_option == '11'):
+        list_directories(stub)
+    elif (selected_option == '12'):
+        traverse(stub)
     else:
         print("Please Choose out of given options")
 

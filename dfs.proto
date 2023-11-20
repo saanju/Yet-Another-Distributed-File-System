@@ -17,6 +17,19 @@ service DataTransferService {
 	rpc GetFileChunk(FileDataChunkInfo) returns (stream FileDataChunk);
 	rpc IsDataNodeAlive(Empty) returns (DataNodeStats);
 	rpc DeleteFileChunk(FileDataChunkInfo) returns (Ack);
+	rpc CreateDirectory(MetaDataInfo) returns (Ack);
+	rpc DeleteDirectory(MetaDataInfo) returns (Ack);
+	rpc MoveDirectory(MetaDataInfo) returns (Ack);
+	rpc CopyDirectory(MetaDataInfo) returns (Ack);
+	rpc ListDirectories(MetaDataInfo) returns (Ack);
+	rpc Traverse(MetaDataInfo) returns (Ack);
+}
+
+message MetaDataInfo {
+	string username=1;
+	string directory1=2;
+	string directory2=3;
+	string command=4;
 }
 
 message testM {
