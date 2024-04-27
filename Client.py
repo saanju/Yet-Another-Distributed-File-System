@@ -16,6 +16,7 @@ def get_file_chunks():
     global Filename
 
     MAX_CHUNK_SIZE = 4000000
+    
 
     username = input("Enter Username : ")
     filename = input("Enter Filename : ")
@@ -255,7 +256,7 @@ def get_user_input(stub):
     print("10. Metadata Op: Copy Directory")
     print("11. Metadata Op: List Directories")
     print("12. Metadata Op: Traverse Directories")
-    print("==================================================")
+    print("====================================================")
     selected_option = input("Please Choose an Input : \n")
 
     if (selected_option == '1'):
