@@ -1,4 +1,6 @@
 # Yet-Another-Distributed-File-System
+Successfully implemented a scalable and fault-tolerant distributed storage system leveraging Docker,NoSQL databases like Redis and gRPC, overseeing management of data nodes and name nodes ensuring 99.9\% uptime. Applied concurrent multi-threaded programming and distributed systems principles effectively.
+
 
 ## Procedure To Run
 
